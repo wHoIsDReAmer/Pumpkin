@@ -11,7 +11,7 @@ fn const_block_name_from_block_name(block: &str) -> String {
 }
 
 fn property_group_name_from_derived_name(name: &str) -> String {
-    format!("{}_properties", name).to_upper_camel_case()
+    format!("{name}_properties").to_upper_camel_case()
 }
 
 enum PropertyType {
@@ -1015,7 +1015,7 @@ impl GeneratedProperty {
     fn to_property(&self) -> Property {
         let enum_name = match &self.property_type {
             GeneratedPropertyType::Boolean => "boolean".to_string(),
-            GeneratedPropertyType::Int { min, max } => format!("integer_{}_to_{}", min, max),
+            GeneratedPropertyType::Int { min, max } => format!("integer_{min}_to_{max}"),
             GeneratedPropertyType::Enum { .. } => self.enum_name.clone(),
         };
 
@@ -1026,7 +1026,7 @@ impl GeneratedProperty {
             GeneratedPropertyType::Int { min, max } => {
                 let mut values = Vec::new();
                 for i in *min..=*max {
-                    values.push(format!("L{}", i));
+                    values.push(format!("L{i}"));
                 }
                 values
             }
