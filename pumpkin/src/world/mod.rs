@@ -1291,6 +1291,7 @@ impl World {
         let base_entity = entity.get_entity();
         self.broadcast_packet_all(&base_entity.create_spawn_packet())
             .await;
+        entity.init_data_tracker().await;
         let mut current_living_entities = self.entities.write().await;
         current_living_entities.insert(base_entity.entity_uuid, entity);
     }

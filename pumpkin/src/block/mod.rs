@@ -13,6 +13,7 @@ use blocks::iron_bars::IronBarsBlock;
 use blocks::logs::LogBlock;
 use blocks::nether_portal::NetherPortalBlock;
 use blocks::note::NoteBlock;
+use blocks::pumpkin::PumpkinBlock;
 use blocks::redstone::buttons::ButtonBlock;
 use blocks::redstone::observer::ObserverBlock;
 use blocks::redstone::piston::PistonBlock;
@@ -90,6 +91,7 @@ pub fn default_registry() -> Arc<BlockRegistry> {
     manager.register(WallBlock);
     manager.register(NetherPortalBlock);
     manager.register(NoteBlock);
+    manager.register(PumpkinBlock);
 
     // Fire
     manager.register(SoulFireBlock);
@@ -163,8 +165,7 @@ async fn drop_stack(world: &Arc<World>, pos: &BlockPos, stack: ItemStack) {
 
     let entity = world.create_entity(pos, EntityType::ITEM);
     let item_entity = Arc::new(ItemEntity::new(entity, stack).await);
-    world.spawn_entity(item_entity.clone()).await;
-    item_entity.send_meta_packet().await;
+    world.spawn_entity(item_entity).await;
 }
 
 pub async fn calc_block_breaking(player: &Player, state: &BlockState, block_name: &str) -> f32 {

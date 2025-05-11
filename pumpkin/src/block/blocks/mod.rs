@@ -16,6 +16,7 @@ pub mod jukebox;
 pub mod logs;
 pub mod nether_portal;
 pub mod note;
+pub mod pumpkin;
 pub mod redstone;
 pub mod signs;
 pub mod slabs;
