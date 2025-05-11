@@ -12,6 +12,7 @@ use blocks::glass_panes::GlassPaneBlock;
 use blocks::iron_bars::IronBarsBlock;
 use blocks::logs::LogBlock;
 use blocks::nether_portal::NetherPortalBlock;
+use blocks::note::NoteBlock;
 use blocks::redstone::buttons::ButtonBlock;
 use blocks::redstone::observer::ObserverBlock;
 use blocks::redstone::piston::PistonBlock;
@@ -88,6 +89,7 @@ pub fn default_registry() -> Arc<BlockRegistry> {
     manager.register(TorchBlock);
     manager.register(WallBlock);
     manager.register(NetherPortalBlock);
+    manager.register(NoteBlock);
 
     // Fire
     manager.register(SoulFireBlock);
@@ -116,6 +118,12 @@ pub fn default_registry() -> Arc<BlockRegistry> {
     manager.register_fluid(FlowingWater);
     manager.register_fluid(FlowingLava);
     Arc::new(manager)
+}
+
+pub struct BlockEvent {
+    pub pos: BlockPos,
+    pub r#type: u8,
+    pub data: u8,
 }
 
 pub async fn drop_loot(
