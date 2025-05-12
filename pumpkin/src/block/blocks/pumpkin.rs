@@ -1,6 +1,6 @@
 use crate::entity::item::ItemEntity;
 use crate::server::Server;
-use crate::world::{BlockFlags, World};
+use crate::world::World;
 use crate::{block::registry::BlockActionResult, entity::player::Player};
 use async_trait::async_trait;
 use pumpkin_data::Block;
@@ -9,6 +9,7 @@ use pumpkin_data::item::Item;
 use pumpkin_macros::pumpkin_block;
 use pumpkin_util::math::position::BlockPos;
 use pumpkin_world::item::ItemStack;
+use pumpkin_world::world::BlockFlags;
 use std::sync::Arc;
 #[pumpkin_block("minecraft:pumpkin")]
 pub struct PumpkinBlock;

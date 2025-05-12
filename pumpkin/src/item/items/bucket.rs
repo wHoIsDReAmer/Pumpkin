@@ -8,9 +8,10 @@ use pumpkin_data::item::Item;
 use pumpkin_util::GameMode;
 use pumpkin_util::math::position::BlockPos;
 use pumpkin_util::math::vector3::Vector3;
+use pumpkin_world::world::BlockFlags;
 
 use crate::item::pumpkin_item::{ItemMetadata, PumpkinItem};
-use crate::world::{BlockFlags, World};
+use crate::world::World;
 
 pub struct EmptyBucketItem;
 pub struct FilledBucketItem;

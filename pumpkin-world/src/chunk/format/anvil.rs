@@ -885,7 +885,7 @@ pub async fn chunk_to_bytes(chunk_data: &ChunkData) -> Result<Vec<u8>, ChunkSeri
         block_entities: join_all(chunk_data.block_entities.values().map(
             |block_entity| async move {
                 let mut nbt = NbtCompound::new();
-                block_entity.write_internal(&mut nbt).await;
+                block_entity.1.write_internal(&mut nbt).await;
                 nbt
             },
         ))

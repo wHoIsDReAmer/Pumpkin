@@ -4,12 +4,22 @@ pub struct BlockState {
     pub state_flags: u8,
     pub instrument: &'static str,
     pub luminance: u8,
+    pub piston_behavior: PistonBehavior,
     pub hardness: f32,
     pub collision_shapes: &'static [u16],
     /// u8::MAX is used as None
     pub opacity: u8,
     /// u16::MAX is used as None
     pub block_entity_type: u16,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum PistonBehavior {
+    Normal,
+    Destroy,
+    Block,
+    Ignore,
+    PushOnly,
 }
 
 // Add your methods here

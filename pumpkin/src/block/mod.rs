@@ -13,6 +13,7 @@ use blocks::iron_bars::IronBarsBlock;
 use blocks::logs::LogBlock;
 use blocks::nether_portal::NetherPortalBlock;
 use blocks::note::NoteBlock;
+use blocks::piston::piston_extension::PistonExtensionBlock;
 use blocks::pumpkin::PumpkinBlock;
 use blocks::redstone::buttons::ButtonBlock;
 use blocks::redstone::observer::ObserverBlock;
@@ -101,7 +102,11 @@ pub fn default_registry() -> Arc<BlockRegistry> {
     manager.register(ButtonBlock);
     manager.register(LeverBlock);
     manager.register(ObserverBlock);
+
+    // Piston
     manager.register(PistonBlock);
+    manager.register(PistonExtensionBlock);
+
     manager.register(RedstoneBlock);
     manager.register(RedstoneLamp);
     manager.register(RedstoneTorchBlock);
