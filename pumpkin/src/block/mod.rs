@@ -13,11 +13,12 @@ use blocks::iron_bars::IronBarsBlock;
 use blocks::logs::LogBlock;
 use blocks::nether_portal::NetherPortalBlock;
 use blocks::note::NoteBlock;
+use blocks::piston::piston::PistonBlock;
 use blocks::piston::piston_extension::PistonExtensionBlock;
+use blocks::piston::piston_head::PistonHeadBlock;
 use blocks::pumpkin::PumpkinBlock;
 use blocks::redstone::buttons::ButtonBlock;
 use blocks::redstone::observer::ObserverBlock;
-use blocks::redstone::piston::PistonBlock;
 use blocks::redstone::rails::activator_rail::ActivatorRailBlock;
 use blocks::redstone::rails::detector_rail::DetectorRailBlock;
 use blocks::redstone::rails::powered_rail::PoweredRailBlock;
@@ -106,6 +107,7 @@ pub fn default_registry() -> Arc<BlockRegistry> {
     // Piston
     manager.register(PistonBlock);
     manager.register(PistonExtensionBlock);
+    manager.register(PistonHeadBlock);
 
     manager.register(RedstoneBlock);
     manager.register(RedstoneLamp);
@@ -127,6 +129,7 @@ pub fn default_registry() -> Arc<BlockRegistry> {
     Arc::new(manager)
 }
 
+#[derive(Clone)]
 pub struct BlockEvent {
     pub pos: BlockPos,
     pub r#type: u8,

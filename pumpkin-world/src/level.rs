@@ -26,6 +26,7 @@ use crate::{
     },
     generation::{Seed, WorldGenerator, get_world_gen},
     lock::{LevelLocker, anvil::AnvilLevelLocker},
+    world::SimpleWorld,
     world_info::{
         LevelData, WorldInfoError, WorldInfoReader, WorldInfoWriter,
         anvil::{AnvilLevelInfo, LEVEL_DAT_BACKUP_FILE_NAME, LEVEL_DAT_FILE_NAME},
@@ -319,6 +320,17 @@ impl Level {
                 });
             }
         });
+    }
+
+    pub async fn tick_block_entities(&self, world: Arc<dyn SimpleWorld>) {
+        for chunk in self.loaded_chunks.iter() {
+            let chunk = chunk.read().await;
+            let cloned_entities = chunk.block_entities.clone();
+            drop(chunk);
+            for block_entity in &cloned_entities {
+                block_entity.1.1.tick(&world).await;
+            }
+        }
     }
 
     pub async fn clean_chunk(self: &Arc<Self>, chunk: &Vector2<i32>) {

@@ -199,7 +199,12 @@ impl World {
 
     async fn flush_synced_block_events(self: &Arc<Self>) {
         let mut queue = self.synced_block_event_queue.lock().await;
-        for event in queue.drain(..) {
+        let events: Vec<BlockEvent> = queue.clone();
+        queue.clear();
+        // THIS IS IMPORTANT
+        // it prevents deadlocks and also removes the need to wait for a lock when adding a new synced block
+        drop(queue);
+        for event in events {
             let block = self.get_block(&event.pos).await.unwrap(); // TODO
             if !self
                 .block_registry
@@ -366,6 +371,8 @@ impl World {
 
     pub async fn tick(self: &Arc<Self>, server: &Server) {
         self.flush_block_updates().await;
+        // tick block entities
+        self.level.tick_block_entities(self.clone()).await;
         self.flush_synced_block_events().await;
 
         // world ticks

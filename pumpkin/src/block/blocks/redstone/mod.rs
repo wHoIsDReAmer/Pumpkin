@@ -13,7 +13,6 @@ use crate::world::World;
 pub mod buttons;
 pub mod lever;
 pub mod observer;
-pub mod piston;
 pub mod rails;
 pub mod redstone_block;
 pub mod redstone_lamp;
