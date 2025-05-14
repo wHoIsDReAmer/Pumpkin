@@ -64,7 +64,7 @@ use pumpkin_protocol::{
     codec::var_int::VarInt,
 };
 use pumpkin_registry::DimensionType;
-use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
+use pumpkin_util::math::{boundingbox::BoundingBox, position::BlockPos, vector3::Vector3};
 use pumpkin_util::math::{position::chunk_section_from_pos, vector2::Vector2};
 use pumpkin_util::text::{TextComponent, color::NamedColor};
 use pumpkin_world::world::BlockFlags;
@@ -1068,6 +1068,23 @@ impl World {
             }
         }
         None
+    }
+
+    pub async fn get_entities_at_box(&self, aabb: &BoundingBox) -> Vec<Arc<dyn EntityBase>> {
+        let entities_guard = self.entities.read().await;
+        entities_guard
+            .values()
+            .filter(|entity| entity.get_entity().bounding_box.load().intersects(aabb))
+            .cloned()
+            .collect()
+    }
+    pub async fn get_players_at_box(&self, aabb: &BoundingBox) -> Vec<Arc<Player>> {
+        let players_guard = self.players.read().await;
+        players_guard
+            .values()
+            .filter(|player| player.get_entity().bounding_box.load().intersects(aabb))
+            .cloned()
+            .collect()
     }
 
     /// Retrieves a player by their unique UUID.

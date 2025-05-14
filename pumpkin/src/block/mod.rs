@@ -19,6 +19,8 @@ use blocks::piston::piston_head::PistonHeadBlock;
 use blocks::pumpkin::PumpkinBlock;
 use blocks::redstone::buttons::ButtonBlock;
 use blocks::redstone::observer::ObserverBlock;
+use blocks::redstone::pressure_plate::plate::PressurePlateBlock;
+use blocks::redstone::pressure_plate::weighted::WeightedPressurePlateBlock;
 use blocks::redstone::rails::activator_rail::ActivatorRailBlock;
 use blocks::redstone::rails::detector_rail::DetectorRailBlock;
 use blocks::redstone::rails::powered_rail::PoweredRailBlock;
@@ -94,6 +96,8 @@ pub fn default_registry() -> Arc<BlockRegistry> {
     manager.register(NetherPortalBlock);
     manager.register(NoteBlock);
     manager.register(PumpkinBlock);
+    manager.register(PressurePlateBlock);
+    manager.register(WeightedPressurePlateBlock);
 
     // Fire
     manager.register(SoulFireBlock);

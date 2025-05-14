@@ -484,6 +484,34 @@ impl Entity {
         // } else {
         // }
     }
+
+    pub async fn check_block_collision(&self) {
+        let aabb = self.bounding_box.load();
+        let blockpos = BlockPos::new(
+            (aabb.min.x + 0.001).floor() as i32,
+            (aabb.min.y + 0.001).floor() as i32,
+            (aabb.min.z + 0.001).floor() as i32,
+        );
+        let blockpos1 = BlockPos::new(
+            (aabb.max.x - 0.001).floor() as i32,
+            (aabb.max.y - 0.001).floor() as i32,
+            (aabb.max.z - 0.001).floor() as i32,
+        );
+        let world = self.world.read().await;
+
+        for x in blockpos.0.x..=blockpos1.0.x {
+            for y in blockpos.0.y..=blockpos1.0.y {
+                for z in blockpos.0.z..=blockpos1.0.z {
+                    let pos = BlockPos::new(x, y, z);
+                    let (block, state) = world.get_block_and_block_state(&pos).await.unwrap();
+                    world
+                        .block_registry
+                        .on_entity_collision(block, &world, self, pos, state)
+                        .await;
+                }
+            }
+        }
+    }
 }
 
 #[async_trait]

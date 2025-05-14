@@ -262,7 +262,7 @@ impl LivingEntity {
             .await;
     }
 
-    fn tick_move(&self) {
+    async fn tick_move(&self) {
         let velo = self.entity.velocity.load();
         let pos = self.entity.pos.load();
         self.entity
@@ -272,6 +272,7 @@ impl LivingEntity {
         self.entity
             .velocity
             .store(velo.multiply(multiplier, 1.0, multiplier));
+        self.entity.check_block_collision().await;
     }
 
     async fn tick_effects(&self) {
@@ -297,7 +298,7 @@ impl LivingEntity {
 impl EntityBase for LivingEntity {
     async fn tick(&self, server: &Server) {
         self.entity.tick(server).await;
-        self.tick_move();
+        self.tick_move().await;
         self.tick_effects().await;
         if self.time_until_regen.load(Relaxed) > 0 {
             self.time_until_regen.fetch_sub(1, Relaxed);
