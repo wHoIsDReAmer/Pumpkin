@@ -663,7 +663,7 @@ impl Player {
 
         self.last_attacked_ticks.fetch_add(1, Relaxed);
 
-        self.living_entity.tick(server).await;
+        self.living_entity.tick(self, server).await;
         self.hunger_manager.tick(self).await;
 
         // experience handling
@@ -1797,6 +1797,9 @@ impl NBTStorage for PlayerInventory {
 #[async_trait]
 impl EntityBase for Player {
     async fn damage(&self, amount: f32, damage_type: DamageType) -> bool {
+        if self.abilities.lock().await.invulnerable {
+            return false;
+        }
         self.world()
             .await
             .play_sound(

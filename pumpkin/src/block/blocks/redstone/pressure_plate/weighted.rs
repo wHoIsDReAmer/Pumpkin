@@ -10,7 +10,7 @@ use pumpkin_world::{BlockStateId, block::BlockDirection};
 
 use crate::{
     block::pumpkin_block::{BlockMetadata, PumpkinBlock},
-    entity::Entity,
+    entity::EntityBase,
     world::World,
 };
 
@@ -41,7 +41,7 @@ impl PumpkinBlock for WeightedPressurePlateBlock {
     async fn on_entity_collision(
         &self,
         world: &Arc<World>,
-        _entity: &Entity,
+        _entity: &dyn EntityBase,
         pos: BlockPos,
         block: Block,
         state: BlockState,

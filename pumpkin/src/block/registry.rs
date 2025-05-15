@@ -1,5 +1,5 @@
 use crate::block::pumpkin_block::{BlockMetadata, PumpkinBlock};
-use crate::entity::Entity;
+use crate::entity::EntityBase;
 use crate::entity::player::Player;
 use crate::server::Server;
 use crate::world::World;
@@ -60,7 +60,7 @@ impl BlockRegistry {
         &self,
         block: Block,
         world: &Arc<World>,
-        entity: &Entity,
+        entity: &dyn EntityBase,
         pos: BlockPos,
         state: BlockState,
     ) {

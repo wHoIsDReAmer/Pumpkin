@@ -400,7 +400,7 @@ impl World {
 
         // Entity ticks
         for entity in entities_to_tick {
-            entity.tick(server).await;
+            entity.tick(entity.as_ref(), server).await;
             for player in self.players.read().await.values() {
                 if player
                     .living_entity
@@ -411,7 +411,7 @@ impl World {
                     .expand(1.0, 0.5, 1.0)
                     .intersects(&entity.get_entity().bounding_box.load())
                 {
-                    entity.on_player_collision(player.clone()).await;
+                    entity.on_player_collision(player).await;
                     break;
                 }
             }

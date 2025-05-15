@@ -1,5 +1,5 @@
 use crate::block::registry::BlockActionResult;
-use crate::entity::Entity;
+use crate::entity::EntityBase;
 use crate::entity::player::Player;
 use crate::server::Server;
 use crate::world::World;
@@ -53,7 +53,7 @@ pub trait PumpkinBlock: Send + Sync {
     async fn on_entity_collision(
         &self,
         _world: &Arc<World>,
-        _entity: &Entity,
+        _entity: &dyn EntityBase,
         _pos: BlockPos,
         _block: Block,
         _state: BlockState,

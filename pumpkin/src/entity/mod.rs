@@ -57,12 +57,18 @@ pub type EntityId = i32;
 
 #[async_trait]
 pub trait EntityBase: Send + Sync {
-    /// Gets Called every tick
-    async fn tick(&self, server: &Server) {
+    /// Called every tick for this entity.
+    ///
+    /// The `caller` parameter is a reference to the entity that initiated the tick.
+    /// This can be the same entity the method is being called on (`self`),
+    /// but in some scenarios (e.g., interactions or events), it might be a different entity.
+    ///
+    /// The `server` parameter provides access to the game server instance.
+    async fn tick(&self, caller: &dyn EntityBase, server: &Server) {
         if let Some(living) = self.get_living_entity() {
-            living.tick(server).await;
+            living.tick(caller, server).await;
         } else {
-            self.get_entity().tick(server).await;
+            self.get_entity().tick(caller, server).await;
         }
     }
 
@@ -78,7 +84,7 @@ pub trait EntityBase: Send + Sync {
     }
 
     /// Called when a player collides with a entity
-    async fn on_player_collision(&self, _player: Arc<Player>) {}
+    async fn on_player_collision(&self, _player: &Arc<Player>) {}
     fn get_entity(&self) -> &Entity;
     fn get_living_entity(&self) -> Option<&LivingEntity>;
 }
@@ -485,8 +491,8 @@ impl Entity {
         // }
     }
 
-    pub async fn check_block_collision(&self) {
-        let aabb = self.bounding_box.load();
+    pub async fn check_block_collision(entity: &dyn EntityBase) {
+        let aabb = entity.get_entity().bounding_box.load();
         let blockpos = BlockPos::new(
             (aabb.min.x + 0.001).floor() as i32,
             (aabb.min.y + 0.001).floor() as i32,
@@ -497,7 +503,7 @@ impl Entity {
             (aabb.max.y - 0.001).floor() as i32,
             (aabb.max.z - 0.001).floor() as i32,
         );
-        let world = self.world.read().await;
+        let world = entity.get_entity().world.read().await;
 
         for x in blockpos.0.x..=blockpos1.0.x {
             for y in blockpos.0.y..=blockpos1.0.y {
@@ -506,7 +512,7 @@ impl Entity {
                     let (block, state) = world.get_block_and_block_state(&pos).await.unwrap();
                     world
                         .block_registry
-                        .on_entity_collision(block, &world, self, pos, state)
+                        .on_entity_collision(block, &world, entity, pos, state)
                         .await;
                 }
             }
@@ -520,8 +526,8 @@ impl EntityBase for Entity {
         false
     }
 
-    async fn tick(&self, _: &Server) {
-        //Todo! Tick
+    async fn tick(&self, _caller: &dyn EntityBase, _: &Server) {
+        // TODO: Tick
     }
 
     fn get_entity(&self) -> &Entity {
