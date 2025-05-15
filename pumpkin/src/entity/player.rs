@@ -886,7 +886,7 @@ impl Player {
         pitch: Option<f32>,
     ) {
         let current_world = self.living_entity.entity.world.read().await.clone();
-        let info = &new_world.level.level_info;
+        let info = &new_world.level_info;
         let position = if let Some(pos) = position {
             pos
         } else {

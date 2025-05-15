@@ -21,7 +21,7 @@ impl PumpkinBlock for LilyPadBlock {
         _block: Block,
         _state: BlockState,
     ) {
-        // Proberbly not the best soultion, but works
+        // Proberbly not the best solution, but works
         if entity
             .get_entity()
             .entity_type

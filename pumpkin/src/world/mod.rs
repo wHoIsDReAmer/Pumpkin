@@ -67,7 +67,6 @@ use pumpkin_registry::DimensionType;
 use pumpkin_util::math::{boundingbox::BoundingBox, position::BlockPos, vector3::Vector3};
 use pumpkin_util::math::{position::chunk_section_from_pos, vector2::Vector2};
 use pumpkin_util::text::{TextComponent, color::NamedColor};
-use pumpkin_world::world::BlockFlags;
 use pumpkin_world::{
     BlockStateId, GENERATION_SETTINGS, GeneratorSetting, biome, block::entities::BlockEntity,
     level::SyncChunk,
@@ -78,6 +77,7 @@ use pumpkin_world::{
     entity::entity_data_flags::{DATA_PLAYER_MAIN_HAND, DATA_PLAYER_MODE_CUSTOMISATION},
     world::GetBlockError,
 };
+use pumpkin_world::{world::BlockFlags, world_info::LevelData};
 use rand::{Rng, thread_rng};
 use scoreboard::Scoreboard;
 use serde::Serialize;
@@ -122,6 +122,7 @@ impl PumpkinError for GetBlockError {
 pub struct World {
     /// The underlying level, responsible for chunk management and terrain generation.
     pub level: Arc<Level>,
+    pub level_info: Arc<LevelData>,
     /// A map of active players within the world, keyed by their unique UUID.
     pub players: Arc<RwLock<HashMap<uuid::Uuid, Arc<Player>>>>,
     /// A map of active entities within the world, keyed by their unique UUID.
@@ -143,13 +144,13 @@ pub struct World {
     synced_block_event_queue: Mutex<Vec<BlockEvent>>,
     /// A map of unsent block changes, keyed by block position.
     unsent_block_changes: Mutex<HashMap<BlockPos, u16>>,
-    // TODO: entities
 }
 
 impl World {
     #[must_use]
     pub fn load(
         level: Level,
+        level_info: Arc<LevelData>,
         dimension_type: DimensionType,
         block_registry: Arc<BlockRegistry>,
     ) -> Self {
@@ -159,6 +160,7 @@ impl World {
             .unwrap();
         Self {
             level: Arc::new(level),
+            level_info,
             players: Arc::new(RwLock::new(HashMap::new())),
             entities: Arc::new(RwLock::new(HashMap::new())),
             scoreboard: Mutex::new(Scoreboard::new()),
@@ -559,7 +561,7 @@ impl World {
 
             (position, yaw, pitch)
         } else {
-            let info = &self.level.level_info;
+            let info = &self.level_info;
             let position = Vector3::new(
                 f64::from(info.spawn_x),
                 f64::from(info.spawn_y) + 1.0,
@@ -890,7 +892,7 @@ impl World {
         player.send_permission_lvl_update().await;
 
         // Teleport
-        let info = &self.level.level_info;
+        let info = &self.level_info;
         let mut position = Vector3::new(
             f64::from(info.spawn_x),
             f64::from(info.spawn_y),
