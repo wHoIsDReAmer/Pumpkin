@@ -10,6 +10,7 @@ use blocks::fire::fire::FireBlock;
 use blocks::fire::soul_fire::SoulFireBlock;
 use blocks::glass_panes::GlassPaneBlock;
 use blocks::iron_bars::IronBarsBlock;
+use blocks::lily_pad::LilyPadBlock;
 use blocks::logs::LogBlock;
 use blocks::nether_portal::NetherPortalBlock;
 use blocks::note::NoteBlock;
@@ -90,6 +91,7 @@ pub fn default_registry() -> Arc<BlockRegistry> {
     manager.register(SignBlock);
     manager.register(SlabBlock);
     manager.register(StairBlock);
+    manager.register(LilyPadBlock);
     manager.register(SugarCaneBlock);
     manager.register(TNTBlock);
     manager.register(TorchBlock);

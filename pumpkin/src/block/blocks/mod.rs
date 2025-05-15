@@ -13,6 +13,7 @@ pub mod furnace;
 pub mod glass_panes;
 pub mod iron_bars;
 pub mod jukebox;
+pub mod lily_pad;
 pub mod logs;
 pub mod nether_portal;
 pub mod note;
