@@ -277,7 +277,6 @@ impl Server {
                 }
             } else {
                 // Player data exists but doesn't have a "Dimension" key.
-                log::warn!("Player data missing 'Dimension' key, defaulting to Overworld.");
                 let default_world_guard = self.worlds.read().await;
                 let default_world = default_world_guard
                     .first()

@@ -72,6 +72,13 @@ impl BlockRegistry {
         }
     }
 
+    pub async fn on_entity_collision_fluid(&self, fluid: &Fluid, entity: &dyn EntityBase) {
+        let pumpkin_fluid = self.get_pumpkin_fluid(fluid);
+        if let Some(pumpkin_fluid) = pumpkin_fluid {
+            pumpkin_fluid.on_entity_collision(entity).await;
+        }
+    }
+
     pub async fn on_use(
         &self,
         block: &Block,

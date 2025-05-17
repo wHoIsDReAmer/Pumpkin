@@ -138,6 +138,8 @@ pub struct Entity {
     pub invulnerable: AtomicBool,
     /// List of damage types this entity is immune to
     pub damage_immunities: Vec<DamageType>,
+    pub fire_ticks: AtomicI32,
+    pub has_visual_fire: AtomicBool,
 
     pub portal_cooldown: AtomicU32,
 
@@ -189,6 +191,8 @@ impl Entity {
             bounding_box_size: AtomicCell::new(bounding_box_size),
             invulnerable: AtomicBool::new(invulnerable),
             damage_immunities: Vec::new(),
+            fire_ticks: AtomicI32::new(-1),
+            has_visual_fire: AtomicBool::new(false),
             portal_cooldown: AtomicU32::new(0),
             portal_manager: Mutex::new(None),
         }
@@ -353,6 +357,22 @@ impl Entity {
         }
     }
 
+    /// Extinguishes this entity.
+    pub fn extinguish(&self) {
+        self.fire_ticks.store(0, Ordering::Relaxed);
+    }
+
+    pub fn set_on_fire_for(&self, seconds: f32) {
+        self.set_on_fire_for_ticks((seconds * 20.0).floor() as u32);
+    }
+
+    pub fn set_on_fire_for_ticks(&self, ticks: u32) {
+        if self.fire_ticks.load(Ordering::Relaxed) < ticks as i32 {
+            self.fire_ticks.store(ticks as i32, Ordering::Relaxed);
+        }
+        // TODO: defrost
+    }
+
     /// Sets the `Entity` yaw & pitch rotation
     pub fn set_rotation(&self, yaw: f32, pitch: f32) {
         // TODO
@@ -421,6 +441,13 @@ impl Entity {
             self.set_pose(EntityPose::Crouching).await;
         } else {
             self.set_pose(EntityPose::Standing).await;
+        }
+    }
+
+    pub async fn set_on_fire(&self, on_fire: bool) {
+        if self.has_visual_fire.load(Ordering::Relaxed) != on_fire {
+            self.has_visual_fire.store(on_fire, Ordering::Relaxed);
+            self.set_flag(Flag::OnFire, on_fire).await;
         }
     }
 
@@ -572,6 +599,12 @@ impl Entity {
                             .on_entity_collision(block, &world, entity, pos, state)
                             .await;
                     }
+                    if let Ok(fluid) = world.get_fluid(&pos).await {
+                        world
+                            .block_registry
+                            .on_entity_collision_fluid(&fluid, entity)
+                            .await;
+                    }
                 }
             }
         }
@@ -584,8 +617,25 @@ impl EntityBase for Entity {
         false
     }
 
-    async fn tick(&self, _caller: &dyn EntityBase, _: &Server) {
+    async fn tick(&self, caller: &dyn EntityBase, _: &Server) {
         self.tick_portal().await;
+        let fire_ticks = self.fire_ticks.load(Ordering::Relaxed);
+        if fire_ticks > 0 {
+            if self.entity_type.fire_immune {
+                self.fire_ticks.store(fire_ticks - 4, Ordering::Relaxed);
+                if self.fire_ticks.load(Ordering::Relaxed) < 0 {
+                    self.extinguish();
+                }
+            } else {
+                if fire_ticks % 20 == 0 {
+                    caller.damage(1.0, DamageType::ON_FIRE).await;
+                }
+
+                self.fire_ticks.store(fire_ticks - 1, Ordering::Relaxed);
+            }
+        }
+        self.set_on_fire(self.fire_ticks.load(Ordering::Relaxed) > 0)
+            .await;
         // TODO: Tick
     }
 
@@ -619,7 +669,13 @@ impl NBTStorage for Entity {
             "Rotation",
             NbtTag::List(vec![self.yaw.load().into(), self.pitch.load().into()].into_boxed_slice()),
         );
+        nbt.put_short("Fire", self.fire_ticks.load(Relaxed) as i16);
         nbt.put_bool("OnGround", self.on_ground.load(Relaxed));
+        nbt.put_bool("Invulnerable", self.invulnerable.load(Relaxed));
+        nbt.put_int("PortalCooldown", self.portal_cooldown.load(Relaxed) as i32);
+        if self.has_visual_fire.load(Relaxed) {
+            nbt.put_bool("HasVisualFire", true);
+        }
 
         // todo more...
     }
@@ -640,8 +696,16 @@ impl NBTStorage for Entity {
         let pitch = rotation[1].extract_float().unwrap_or(0.0);
         self.set_rotation(yaw, pitch);
         self.head_yaw.store(yaw);
+        self.fire_ticks
+            .store(i32::from(nbt.get_short("Fire").unwrap_or(0)), Relaxed);
         self.on_ground
             .store(nbt.get_bool("OnGround").unwrap_or(false), Relaxed);
+        self.invulnerable
+            .store(nbt.get_bool("Invulnerable").unwrap_or(false), Relaxed);
+        self.portal_cooldown
+            .store(nbt.get_int("PortalCooldown").unwrap_or(0) as u32, Relaxed);
+        self.has_visual_fire
+            .store(nbt.get_bool("HasVisualFire").unwrap_or(false), Relaxed);
         // todo more...
     }
 }
