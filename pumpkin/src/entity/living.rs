@@ -200,10 +200,7 @@ impl LivingEntity {
     pub async fn is_in_water(&self) -> bool {
         let world = self.entity.world.read().await;
         let block_pos = self.entity.block_pos.load();
-        world
-            .get_block(&block_pos)
-            .await
-            .is_ok_and(|block| block == Block::WATER)
+        world.get_block(&block_pos).await == Block::WATER
     }
 
     pub async fn update_fall_distance(
