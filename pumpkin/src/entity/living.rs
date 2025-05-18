@@ -355,6 +355,7 @@ impl NBTStorage for LivingEntity {
     async fn write_nbt(&self, nbt: &mut pumpkin_nbt::compound::NbtCompound) {
         self.entity.write_nbt(nbt).await;
         nbt.put("Health", NbtTag::Float(self.health.load()));
+        nbt.put("fall_distance", NbtTag::Float(self.fall_distance.load()));
         //TODO: write equipment
         // todo more...
     }
@@ -362,6 +363,8 @@ impl NBTStorage for LivingEntity {
     async fn read_nbt(&mut self, nbt: &mut pumpkin_nbt::compound::NbtCompound) {
         self.entity.read_nbt(nbt).await;
         self.health.store(nbt.get_float("Health").unwrap_or(0.0));
+        self.fall_distance
+            .store(nbt.get_float("fall_distance").unwrap_or(0.0));
         // todo more...
     }
 }
