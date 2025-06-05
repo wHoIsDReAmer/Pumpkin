@@ -1335,10 +1335,13 @@ impl World {
         let (chunk_coordinate, relative) = position.chunk_and_chunk_relative_position();
         let chunk = self.level.get_chunk(chunk_coordinate).await;
         let mut chunk = chunk.write().await;
-        let replaced_block_state_id = chunk
-            .section
-            .get_block_absolute_y(relative.x as usize, relative.y, relative.z as usize)
-            .unwrap();
+        let Some(replaced_block_state_id) = chunk.section.get_block_absolute_y(
+            relative.x as usize,
+            relative.y,
+            relative.z as usize,
+        ) else {
+            return block_state_id;
+        };
 
         if replaced_block_state_id == block_state_id {
             return block_state_id;
