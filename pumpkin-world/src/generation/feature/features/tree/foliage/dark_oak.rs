@@ -120,7 +120,6 @@ impl LeaveValidator for DarkOakFoliagePlacer {
         radius: i32,
         giant_trunk: bool,
     ) -> bool {
-        dbg!("aa");
         if !(y != 0 || !giant_trunk || dx != -radius && dx < radius || dz != -radius && dz < radius)
         {
             return true;
