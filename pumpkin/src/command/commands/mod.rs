@@ -15,6 +15,7 @@ mod clear;
 mod damage;
 pub mod defaultgamemode;
 mod deop;
+mod difficulty;
 mod effect;
 mod experience;
 mod fill;
@@ -96,6 +97,10 @@ pub async fn default_dispatcher() -> CommandDispatcher {
     dispatcher.register(bossbar::init_command_tree(), "minecraft:command.bossbar");
     dispatcher.register(say::init_command_tree(), "minecraft:command.say");
     dispatcher.register(gamemode::init_command_tree(), "minecraft:command.gamemode");
+    dispatcher.register(
+        difficulty::init_command_tree(),
+        "minecraft:command.difficulty",
+    );
     dispatcher.register(
         stopsound::init_command_tree(),
         "minecraft:command.stopsound",
@@ -351,6 +356,13 @@ fn register_level_2_permissions(registry: &mut PermissionRegistry) {
         .register_permission(Permission::new(
             "minecraft:command.defaultgamemode",
             "Sets the default game mode for new players",
+            PermissionDefault::Op(PermissionLvl::Two),
+        ))
+        .unwrap();
+    registry
+        .register_permission(Permission::new(
+            "minecraft:command.difficulty",
+            "Sets the difficulty of the world",
             PermissionDefault::Op(PermissionLvl::Two),
         ))
         .unwrap();
