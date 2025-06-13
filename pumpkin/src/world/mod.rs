@@ -573,7 +573,7 @@ impl World {
                 false,
                 false,
                 None,
-                0.into(),
+                VarInt(player.get_entity().portal_cooldown.load(Ordering::Relaxed) as i32),
                 self.sea_level.into(),
                 // This should stay true even when reports are disabled.
                 // It prevents the annoying popup when joining the server.
@@ -735,8 +735,8 @@ impl World {
                     gameprofile.id,
                     i32::from(EntityType::PLAYER.id).into(),
                     pos,
-                    entity.yaw.load(),
                     entity.pitch.load(),
+                    entity.yaw.load(),
                     entity.head_yaw.load(),
                     0.into(),
                     entity.velocity.load(),
@@ -762,6 +762,7 @@ impl World {
                 meta.serialize(&mut serializer).unwrap();
                 buf.extend(serializer_buf);
             }
+            // END
             buf.put_u8(255);
             player
                 .client
