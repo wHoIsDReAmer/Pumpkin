@@ -22,6 +22,7 @@ use pumpkin_data::particle::Particle;
 use pumpkin_data::sound::{Sound, SoundCategory};
 use pumpkin_data::tag::Tagable;
 use pumpkin_data::{Block, BlockState};
+use pumpkin_inventory::equipment_slot::EquipmentSlot;
 use pumpkin_inventory::player::{
     player_inventory::PlayerInventory, player_screen_handler::PlayerScreenHandler,
 };
@@ -1477,6 +1478,16 @@ impl Player {
         }
     }
 
+    pub async fn swap_item(&self) {
+        let (main_hand_item, off_hand_item) = self.inventory.swap_item().await;
+        let equipment = &[
+            (EquipmentSlot::MAIN_HAND, main_hand_item),
+            (EquipmentSlot::OFF_HAND, off_hand_item),
+        ];
+        self.living_entity.send_equipment_changes(equipment).await;
+        // todo this.player.stopUsingItem();
+    }
+
     pub async fn send_system_message(&self, text: &TextComponent) {
         self.send_system_message_raw(text, false).await;
     }
@@ -1900,13 +1911,24 @@ impl NBTStorage for PlayerInventory {
         nbt.put_int("SelectedItemSlot", i32::from(self.get_selected_slot()));
 
         // Create inventory list with the correct capacity (inventory size)
-        let mut vec: Vec<NbtTag> = Vec::new();
-
-        for i in 0..self.main_inventory.len() {
-            let stack = self.main_inventory[i].lock().await;
+        let mut vec: Vec<NbtTag> = Vec::with_capacity(41);
+        for (i, item) in self.main_inventory.iter().enumerate() {
+            let stack = item.lock().await;
             if !stack.is_empty() {
                 let mut item_compound = NbtCompound::new();
                 item_compound.put_byte("Slot", i as i8);
+                stack.write_item_stack(&mut item_compound);
+                vec.push(NbtTag::Compound(item_compound));
+            }
+        }
+
+        for (i, slot) in &self.equipment_slots {
+            let equipment_binding = self.entity_equipment.lock().await;
+            let stack_binding = equipment_binding.get(slot);
+            let stack = stack_binding.lock().await;
+            if !stack.is_empty() {
+                let mut item_compound = NbtCompound::new();
+                item_compound.put_byte("Slot", *i as i8);
                 stack.write_item_stack(&mut item_compound);
                 vec.push(NbtTag::Compound(item_compound));
             }
