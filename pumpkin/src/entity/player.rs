@@ -314,7 +314,7 @@ impl Player {
             experience_pick_up_delay: Mutex::new(0),
             teleport_id_count: AtomicI32::new(0),
             mining: AtomicBool::new(false),
-            mining_pos: Mutex::new(BlockPos(Vector3::new(0, 0, 0))),
+            mining_pos: Mutex::new(BlockPos::ZERO),
             abilities: Mutex::new(Abilities::default()),
             gamemode: AtomicCell::new(gamemode),
             previous_gamemode: AtomicCell::new(None),
@@ -1869,6 +1869,8 @@ impl NBTStorage for Player {
 
         // Store food level, saturation, exhaustion, and tick timer
         self.hunger_manager.write_nbt(nbt).await;
+
+        nbt.put_string("Dimension", self.world().await.dimension_type.name().get());
     }
 
     async fn read_nbt(&mut self, nbt: &mut NbtCompound) {
