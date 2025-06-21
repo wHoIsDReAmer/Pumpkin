@@ -33,6 +33,7 @@ use blocks::plant::short_plant::ShortPlantBlock;
 use blocks::plant::tall_plant::TallPlantBlock;
 use blocks::pumpkin::PumpkinBlock;
 use blocks::redstone::buttons::ButtonBlock;
+use blocks::redstone::comparator::ComparatorBlock;
 use blocks::redstone::observer::ObserverBlock;
 use blocks::redstone::pressure_plate::plate::PressurePlateBlock;
 use blocks::redstone::pressure_plate::weighted::WeightedPressurePlateBlock;
@@ -163,6 +164,7 @@ pub fn default_registry() -> Arc<BlockRegistry> {
     manager.register(RedstoneTorchBlock);
     manager.register(RedstoneWireBlock);
     manager.register(RepeaterBlock);
+    manager.register(ComparatorBlock);
     manager.register(TargetBlock);
     manager.register(BarrelBlock);
 
