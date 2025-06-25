@@ -46,12 +46,14 @@ use pumpkin_world::block::entities::command_block::CommandBlockEntity;
 use pumpkin_world::block::entities::sign::SignBlockEntity;
 use pumpkin_world::item::ItemStack;
 use pumpkin_world::world::BlockFlags;
+use uuid::Uuid;
 
 use crate::block::registry::BlockActionResult;
 use crate::block::{self, BlockIsReplacing};
 use crate::command::CommandSender;
+use crate::entity::EntityBase;
 use crate::entity::player::{ChatMode, ChatSession, Hand, Player};
-use crate::entity::{EntityBase, mob};
+use crate::entity::r#type::from_type;
 use crate::error::PumpkinError;
 use crate::net::PlayerConfig;
 use crate::plugin::player::player_chat::PlayerChatEvent;
@@ -1622,7 +1624,7 @@ impl Player {
 
         let world = self.world().await;
         // Create a new mob and UUID based on the spawn egg id
-        let mob = mob::from_type(EntityType::from_raw(entity_type.id).unwrap(), pos, &world);
+        let mob = from_type(entity_type, pos, &world, Uuid::new_v4());
 
         // Set the rotation
         mob.get_entity().set_rotation(yaw, 0.0);
