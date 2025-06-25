@@ -102,7 +102,7 @@ impl PumpkinBlock for LeafLitterBlock {
         if direction == BlockDirection::Down {
             let block_below_state = world.get_block_state(&pos.down()).await;
             if !block_below_state.is_side_solid(BlockDirection::Up) {
-                return Block::AIR.default_state_id;
+                return Block::AIR.default_state.id;
             }
         }
         state

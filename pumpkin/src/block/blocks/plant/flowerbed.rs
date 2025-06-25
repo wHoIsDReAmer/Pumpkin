@@ -105,7 +105,7 @@ impl PumpkinBlock for FlowerbedBlock {
             if !(block_below.is_tagged_with("minecraft:dirt").unwrap()
                 || block_below == Block::FARMLAND)
             {
-                return Block::AIR.default_state_id;
+                return Block::AIR.default_state.id;
             }
         }
         state
