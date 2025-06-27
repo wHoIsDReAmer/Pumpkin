@@ -28,13 +28,13 @@ pub(crate) fn build() -> TokenStream {
                 let i = n.as_i64().unwrap();
                 (quote! { Int }, quote! { i64 }, quote! { #i })
             }
-            _ => panic!("Unsupported value type for key '{}'", raw_name),
+            _ => panic!("Unsupported value type for key '{raw_name}'"),
         };
 
         let snake_case = format_ident!("{}", raw_name.to_snake_case());
         let pascal_case = format_ident!("{}", raw_name.to_pascal_case());
-        let default_fn_name = format!("default_{}", snake_case);
-        let default_fn_ident = format_ident!("default_{}", snake_case);
+        let default_fn_name = format!("default_{snake_case}");
+        let default_fn_ident = format_ident!("default_{snake_case}");
 
         // Struct field
         struct_fields.extend(quote! {
@@ -119,8 +119,8 @@ pub(crate) fn build() -> TokenStream {
         impl<I: fmt::Display, B: fmt::Display> fmt::Display for GameRuleValue<I, B> {
             fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
                 match self {
-                    Self::Int(v) => write!(f, "{}", v),
-                    Self::Bool(v) => write!(f, "{}", v),
+                    Self::Int(v) => write!(f, "{v}"),
+                    Self::Bool(v) => write!(f, "{v}"),
                 }
             }
         }
