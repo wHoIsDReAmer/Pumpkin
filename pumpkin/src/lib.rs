@@ -26,8 +26,6 @@ use std::{
 };
 use tokio::net::{TcpListener, UdpSocket};
 use tokio::select;
-#[cfg(feature = "dhat-heap")]
-use tokio::sync::Mutex;
 use tokio::sync::{Mutex, Notify, RwLock};
 use tokio_util::task::TaskTracker;
 
