@@ -28,6 +28,7 @@ impl COpenConnectionReply1 {
 #[derive(Serialize)]
 #[packet(0x08)]
 pub struct COpenConnectionReply2 {
+    magic: [u8; 16],
     server_guid: u64,
     client_address: SocketAddress,
     mtu: u16,
@@ -37,6 +38,7 @@ pub struct COpenConnectionReply2 {
 impl COpenConnectionReply2 {
     pub fn new(server_guid: u64, client_address: SocketAddress, mtu: u16, security: bool) -> Self {
         Self {
+            magic: RAKNET_MAGIC,
             server_guid,
             client_address,
             mtu,
