@@ -1,4 +1,4 @@
-use std::{net::SocketAddr, time::UNIX_EPOCH};
+use std::time::UNIX_EPOCH;
 
 use pumpkin_protocol::{
     bedrock::{
