@@ -83,6 +83,7 @@ use crate::block::blocks::chiseled_bookshelf::ChiseledBookshelfBlock;
 use crate::block::blocks::flower_pots::FlowerPotBlock;
 use crate::block::blocks::glazed_terracotta::GlazedTerracottaBlock;
 use crate::block::blocks::plant::roots::RootsBlock;
+use crate::block::blocks::redstone::dropper::DropperBlock;
 use crate::block::blocks::skull_block::SkullBlock;
 use crate::block::loot::LootContextParameters;
 use crate::block::registry::BlockRegistry;
@@ -187,6 +188,7 @@ pub fn default_registry() -> Arc<BlockRegistry> {
     manager.register(ComparatorBlock);
     manager.register(TargetBlock);
     manager.register(BarrelBlock);
+    manager.register(DropperBlock);
 
     // Rails
     manager.register(RailBlock);
