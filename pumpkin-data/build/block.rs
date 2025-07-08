@@ -18,7 +18,7 @@ fn fill_array<T: Clone + quote::ToTokens>(array: Vec<(u16, T)>) -> Vec<TokenStre
     let mut raw_id_from_state_id_ordered = vec![quote! { None }; (max_index + 1) as usize];
 
     for (state_id, id_lit) in array {
-        raw_id_from_state_id_ordered[state_id as usize] = quote! { Some(#id_lit) };
+        raw_id_from_state_id_ordered[state_id as usize] = quote! { #id_lit };
     }
 
     raw_id_from_state_id_ordered
@@ -953,11 +953,11 @@ pub(crate) fn build() -> TokenStream {
             };
 
             // Many state ids map to single raw block id
-            const RAW_ID_FROM_STATE_ID: [Option<u16>; #max_state_id] = [
+            const RAW_ID_FROM_STATE_ID: [u16; #max_state_id] = [
                 #raw_id_from_state_id
             ];
 
-            const TYPE_FROM_RAW_ID: [Option<&Block>; #max_type_id] = [
+            const TYPE_FROM_RAW_ID: [&Block; #max_type_id] = [
                 #type_from_raw_id_items
             ];
 
@@ -971,7 +971,7 @@ pub(crate) fn build() -> TokenStream {
                 if id as usize >= Self::RAW_ID_FROM_STATE_ID.len() {
                     None
                 } else {
-                    Self::TYPE_FROM_RAW_ID[id as usize]
+                    Some(Self::TYPE_FROM_RAW_ID[id as usize])
                 }
             }
 
@@ -980,10 +980,7 @@ pub(crate) fn build() -> TokenStream {
                 if id as usize >= Self::RAW_ID_FROM_STATE_ID.len() {
                     return None;
                 }
-                match Self::RAW_ID_FROM_STATE_ID[id as usize] {
-                    Some(id) => Self::from_id(id),
-                    None => None,
-                }
+                Self::from_id(Self::RAW_ID_FROM_STATE_ID[id as usize])
             }
 
             #[doc = r" Try to parse a block from an item id."]
