@@ -1,15 +1,13 @@
-use std::hint::black_box;
-use criterion::{criterion_group, criterion_main, Criterion};
+use criterion::{Criterion, criterion_group, criterion_main};
 use pumpkin_data::noise_router::OVERWORLD_BASE_NOISE_ROUTER;
-use pumpkin_world::{
-    generation::{
-        noise_router::{
-            chunk_density_function::ChunkNoiseFunctionBuilderOptions,
-            chunk_noise_router::ChunkNoiseRouter, proto_noise_router::ProtoNoiseRouters,
-        },
-        GlobalRandomConfig,
+use pumpkin_world::generation::{
+    GlobalRandomConfig,
+    noise_router::{
+        chunk_density_function::ChunkNoiseFunctionBuilderOptions,
+        chunk_noise_router::ChunkNoiseRouter, proto_noise_router::ProtoNoiseRouters,
     },
 };
+use std::hint::black_box;
 
 fn bench_noise_router_creation(c: &mut Criterion) {
     let base_routers = &OVERWORLD_BASE_NOISE_ROUTER;
@@ -34,4 +32,4 @@ fn bench_noise_router_creation(c: &mut Criterion) {
 }
 
 criterion_group!(benches, bench_noise_router_creation);
-criterion_main!(benches); 
+criterion_main!(benches);

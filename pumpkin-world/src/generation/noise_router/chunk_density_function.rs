@@ -11,7 +11,9 @@ use pumpkin_util::math::{lerp, lerp3, vector2::Vector2};
 use crate::generation::{biome_coords, positions::chunk_pos};
 
 thread_local! {
-    static F64_BUFFER_POOL: RefCell<Vec<Vec<f64>>> = RefCell::new(Vec::new());
+    static F64_BUFFER_POOL: RefCell<Vec<Vec<f64>>> = const {
+        RefCell::new(Vec::new())
+    };
 }
 
 #[inline]
