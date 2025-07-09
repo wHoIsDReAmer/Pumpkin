@@ -11,10 +11,9 @@ use std::hint::black_box;
 
 fn bench_noise_router_creation(c: &mut Criterion) {
     let base_routers = &OVERWORLD_BASE_NOISE_ROUTER;
-
     let random_config = GlobalRandomConfig::new(0, false);
 
-    let proto_routers = ProtoNoiseRouters::generate(&base_routers, &random_config);
+    let proto_routers = ProtoNoiseRouters::generate(base_routers, &random_config);
     let proto_noise_router = proto_routers.noise;
 
     let builder_options = ChunkNoiseFunctionBuilderOptions::new(4, 8, 4, 4, 0, 0, 3);
