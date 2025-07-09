@@ -219,8 +219,6 @@ version = "1.2.27"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d487aa071b5f64da6f19a3e848e3578944b726ee5a4854b82172f02aa876bfdc"
 dependencies = [
- "jobserver",
- "libc",
  "shlex",
 ]
 
@@ -1181,16 +1179,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "jobserver"
-version = "0.1.33"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "38f262f097c174adebe41eb73d66ae9c06b2844fb0da69969647bbddd9b0538a"
-dependencies = [
- "getrandom 0.3.3",
- "libc",
-]
-
-[[package]]
 name = "js-sys"
 version = "0.3.77"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1278,7 +1266,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3ed1c11dbd317fa5d0508cbb5ce47696bb27771e3c9604428e0e98c7c3d76d0d"
 dependencies = [
  "lz4_flex",
- "twox-hash",
+ "twox-hash 1.6.3",
 ]
 
 [[package]]
@@ -1606,12 +1594,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "pkg-config"
-version = "0.3.32"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7edddbd0b52d732b21ad9a5fab5c704c14cd949e5e9a1ec5929a24fded1b904c"
-
-[[package]]
 name = "portable-atomic"
 version = "1.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1889,6 +1871,7 @@ dependencies = [
  "pumpkin-util",
  "rand",
  "rayon",
+ "ruzstd",
  "serde",
  "serde_json",
  "serde_json5",
@@ -1899,7 +1882,6 @@ dependencies = [
  "tokio",
  "tokio-util",
  "uuid",
- "zstd",
 ]
 
 [[package]]
@@ -2141,6 +2123,15 @@ dependencies = [
  "thiserror",
  "unicode-segmentation",
  "unicode-width",
+]
+
+[[package]]
+name = "ruzstd"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3640bec8aad418d7d03c72ea2de10d5c646a598f9883c7babc160d91e3c1b26c"
+dependencies = [
+ "twox-hash 2.1.1",
 ]
 
 [[package]]
@@ -2631,6 +2622,12 @@ dependencies = [
  "cfg-if",
  "static_assertions",
 ]
+
+[[package]]
+name = "twox-hash"
+version = "2.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8b907da542cbced5261bd3256de1b3a1bf340a3d37f93425a07362a1d687de56"
 
 [[package]]
 name = "typenum"
@@ -3159,32 +3156,4 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
-]
-
-[[package]]
-name = "zstd"
-version = "0.13.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e91ee311a569c327171651566e07972200e76fcfe2242a4fa446149a3881c08a"
-dependencies = [
- "zstd-safe",
-]
-
-[[package]]
-name = "zstd-safe"
-version = "7.2.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8f49c4d5f0abb602a93fb8736af2a4f4dd9512e36f7f570d66e65ff867ed3b9d"
-dependencies = [
- "zstd-sys",
-]
-
-[[package]]
-name = "zstd-sys"
-version = "2.0.15+zstd.1.5.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eb81183ddd97d0c74cedf1d50d85c8d08c1b8b68ee863bdee9e706eedba1a237"
-dependencies = [
- "cc",
- "pkg-config",
 ]
