@@ -1744,6 +1744,13 @@ impl World {
             .await;
         entity.init_data_tracker().await;
 
+        // World level lock
+        self.entities
+            .write()
+            .await
+            .insert(base_entity.entity_uuid, entity.clone());
+
+        // This establishes a consistent lock order: World -> Chunk.
         let (chunk_coordinate, _) = base_entity
             .block_pos
             .load()
@@ -1754,9 +1761,6 @@ impl World {
         entity.write_nbt(&mut nbt).await;
         chunk.data.insert(base_entity.entity_uuid, nbt);
         chunk.mark_dirty(true);
-
-        let mut current_entities = self.entities.write().await;
-        current_entities.insert(base_entity.entity_uuid, entity);
     }
 
     pub async fn remove_entity(&self, entity: &Entity) {

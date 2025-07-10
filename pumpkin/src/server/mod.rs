@@ -436,27 +436,38 @@ impl Server {
     ///
     /// This function does not handle the actual mob spawn options update, which is a TODO item for future implementation.
     pub async fn set_difficulty(&self, difficulty: Difficulty, force_update: Option<bool>) {
-        let mut level_info = self.level_info.write().await;
-        if force_update.unwrap_or_default() || !level_info.difficulty_locked {
-            level_info.difficulty = if BASIC_CONFIG.hardcore {
-                Difficulty::Hard
+        let new_difficulty: Difficulty;
+        let difficulty_locked: bool;
+
+        // To avoid deadlocks, lock the level_info this scope only
+        {
+            let mut level_info = self.level_info.write().await;
+            if force_update.unwrap_or_default() || !level_info.difficulty_locked {
+                level_info.difficulty = if BASIC_CONFIG.hardcore {
+                    Difficulty::Hard
+                } else {
+                    difficulty
+                };
+
+                // Minecraft server updates mob spawn options here
+                // but its not implemented in Pumpkin yet
+                // todo: update mob spawn options
+                new_difficulty = level_info.difficulty;
+                difficulty_locked = level_info.difficulty_locked;
             } else {
-                difficulty
-            };
-            // Minecraft server updates mob spawn options here
-            // but its not implemented in Pumpkin yet
-            // todo: update mob spawn options
-
-            for world in &*self.worlds.read().await {
-                world.level_info.write().await.difficulty = level_info.difficulty;
+                return;
             }
-
-            self.broadcast_packet_all(&CChangeDifficulty::new(
-                level_info.difficulty as u8,
-                level_info.difficulty_locked,
-            ))
-            .await;
         }
+
+        for world in &*self.worlds.read().await {
+            world.level_info.write().await.difficulty = new_difficulty;
+        }
+
+        self.broadcast_packet_all(&CChangeDifficulty::new(
+            new_difficulty as u8,
+            difficulty_locked,
+        ))
+        .await;
     }
 
     /// Searches for a player by their username across all worlds.
