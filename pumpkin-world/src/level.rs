@@ -396,13 +396,9 @@ impl Level {
         };
         let mut rng = SmallRng::from_os_rng();
         for chunk in self.loaded_chunks.iter() {
-            use tokio::time::{Duration, timeout};
-            let mut chunk = match timeout(Duration::from_millis(1), chunk.write()).await {
-                Ok(chunk_guard) => chunk_guard,
-                Err(_) => {
-                    log::info!("Chunk {:?} took too long to lock, skipping", chunk.key());
-                    continue;
-                }
+            let Ok(mut chunk) = chunk.try_write() else {
+                log::trace!("Chunk {:?} is locked, skipping tick", chunk.key());
+                continue;
             };
             ticks.block_ticks.extend(chunk.get_and_tick_block_ticks());
             ticks.fluid_ticks.extend(chunk.get_and_tick_fluid_ticks());
